@@ -8,6 +8,10 @@ typedef struct{
 
 Bag create(){
     Bag bag;
+    bag.card = 0;
+    for(int i = 0; i < 100; i++){
+        bag.filled[i] = false;
+    }
     return bag;
 }
 
@@ -61,6 +65,7 @@ void put(Bag &bag, int element){
                 bag.card++;
                 return;
             }
+            j++;
         }
     }
 }
