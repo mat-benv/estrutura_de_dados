@@ -1,5 +1,6 @@
 #include <string>
 #include "lista_duplamente_encadeada.hpp"
+#include <cstdlib>
 
 enum {
     //tipo da carta
@@ -22,21 +23,44 @@ typedef struct{
 } Bonus;
 
 template<typename T>
-void inicializa_cartas(ListaDinamica<T> &cartas){
+void inicializa_tabuleiro(ListaDinamica<Carta> &tabuleiro){
+
+    cria(tabuleiro);
+    
     std::string simbolos[17]{
         "🍎", "🍐", "🍊", "🍋", "🍌", 
         "🍉", "🍇", "🍓", "🫐", "🍈", 
-        "🍒", "🍑", "🥭", "🍍", "🥥", 
-        "🥝", "🍅"
+        "🍒", "🍑", "🥭", "🍍", "🥥"
     };
-    for(int i = 0; i < 34; i++){
-        Carta c{i, simbolos[i%18], true, NORMAL};
-        insere(cartas, c);
+    
+    for(int i = 0; i < 30; i++){
+        Carta c{
+            i, 
+            simbolos[i%16], 
+            true, 
+            NORMAL
+        };
+        insere(tabuleiro, rand() % (i+1));
     }
-}
+    
+    std::string simbolos_especiais[6]{
+        "⭐", "⭐", "⚡", "💀", "🚫", "🚫"
+    };
 
-template<typename T>
-void cria_tabuleiro(ListaDinamica<T> &tabuleiro){ //tabuleiro: {int id, nodo prox, nodo ant}
-    cria(tabuleiro);
+    int t;
 
+    for(int i = 30; i < 36; i++){
+
+        t = (i < 33) ? BONUS : PENALIDADE;
+
+        Carta c{
+            i,
+            simbolos_especiais[i-30],
+            true,
+            t
+        };
+
+        insere(tabuleiro, rand() % (i+1));
+        
+    }
 }

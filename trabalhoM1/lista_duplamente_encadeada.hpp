@@ -163,4 +163,3 @@ void mostra(const ListaDinamica<T> &lista, const int &pos){
         p = p->prox;
     }
 }
-
