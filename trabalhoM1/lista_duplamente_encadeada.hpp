@@ -1,3 +1,5 @@
+using namespace std;
+
 template<typename T>
 struct Nodo{
     T elemento;
@@ -159,7 +161,7 @@ template<typename T>
 void mostra(const ListaDinamica<T> &lista, const int &pos){
     Nodo<T> *p = lista.inicio;
     while(p != NULL){
-        std::cout << p->elemento << std::endl;
+        cout << p->elemento << endl;
         p = p->prox;
     }
 }
