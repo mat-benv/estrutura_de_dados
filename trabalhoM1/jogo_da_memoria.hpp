@@ -1,14 +1,16 @@
 #include <string>
 #include "lista_duplamente_encadeada.hpp"
 #include <cstdlib>
+#include <iostream>
+#include <iomanip>
 
 using namespace std;
 
 enum {
     //tipo da carta
-    NORMAL,
-    BONUS,
-    PENALIDADE
+    NORMAL, //0
+    BONUS, //1
+    PENALIDADE //2
 };
 
 typedef struct{
@@ -19,13 +21,19 @@ typedef struct{
 } Carta;
 
 typedef struct{
-    char simbolo;
+    string simbolo;
     int duracao;
     string efeito;
 } Bonus;
 
-template<typename T>
-void inicializa_tabuleiro(ListaDinamica<Carta> &tabuleiro){
+typedef struct{
+    string nome;
+    int pontos;
+    ListaDinamica<Bonus> bonus;
+    string pares;
+} Jogador;
+
+void inicializa_tabuleiro(ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
 
     cria(tabuleiro);
     
@@ -42,11 +50,14 @@ void inicializa_tabuleiro(ListaDinamica<Carta> &tabuleiro){
             true, 
             NORMAL
         };
-        insere(tabuleiro, rand() % (i+1));
+        insere(tabuleiro, c, rand() % (i+1));
     }
     
     string simbolos_especiais[6]{
-        "⭐", "⭐", "⚡", "💀", "🚫", "🚫"
+        "⭐", // coringa
+        "⚡", "⚡", //joga 2x
+        "💀", //perde 1 ponto
+        "🚫", "🚫" // perde a vez
     };
 
     int t;
@@ -62,7 +73,104 @@ void inicializa_tabuleiro(ListaDinamica<Carta> &tabuleiro){
             t
         };
 
-        insere(tabuleiro, rand() % (i+1));
+        insere(tabuleiro, c, rand() % (i+1));
 
     }
+
+    for(int i = 0; i < 36; i++){
+        preenchido[i] = true;
+    }
 }
+
+//template<typename T>
+void inicializa_jogador(Jogador &j, string nome){
+    j.nome = nome;
+    cria(j.bonus);
+    j.pontos = 0;
+}
+
+Jogador jogador_da_vez(Jogador jogadores[], int jogada){
+    int i = jogada % 2;
+    return jogadores[i];
+}
+
+void desenha_tabuleiro(const ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
+    cout << "Tabuleiro:\n";
+    Nodo<Carta> *p = tabuleiro.inicio;
+    Carta c;
+    int i = 0;
+    while(p->prox != NULL){
+        cout << "|";
+
+        if(preenchido[i]){
+            c = p->elemento;
+            if(c.oculta){
+                cout << setw(2) << "🎴";
+            } else {
+                cout << setw(2) << c.simbolo;
+            }
+        p = p->prox;
+        } else {
+            cout << setw(2) << " ";
+        }
+        cout << "| ";
+        i++;
+        if(i%6 == 0){
+            for(int j = i - 5; j <= i; j++){
+                cout << "|" << setw(2) << j << "| ";
+            }
+            cout << "\n\n";
+        }
+    }
+    
+}
+
+
+int procura_bonus(Jogador j, string simbolo){
+    Nodo<Bonus>* b;
+    ListaDinamica<Bonus> lista_b;
+    lista_b = j.bonus;
+    b = lista_b.inicio;
+    int pos = 1;
+
+    while(b != NULL){
+        if(b->elemento.simbolo == simbolo){
+            return pos;
+        }
+        b = b->prox;
+        pos++;
+    }
+    return -1;
+}
+
+void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, bool preenchido[]){
+    Jogador j;
+    
+    int o1, o2;
+
+    j = jogador_da_vez(jogadores, turno);
+
+    int pb = procura_bonus(j, "🚫");
+
+    if(pb > 0){
+        cout << j.nome << " perdeu a vez.\n";
+        remove(j.bonus, pb);
+        cin.get();
+        return;
+    }
+    
+    desenha_tabuleiro(tabuleiro, preenchido);
+    
+    do{
+        cout << j.nome << ", digite o numero da primeira carta que quer virar: ";
+        cin >> o1;
+    }while(not preenchido[o1]);
+
+
+    do{
+        cout << j.nome << ", digite o numero da segunda carta que quer virar: ";
+        cin >> o2;
+    }while(not preenchido[o2] || o2 == o1);
+
+}
+
