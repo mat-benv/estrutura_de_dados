@@ -110,7 +110,7 @@ void desenha_tabuleiro(const ListaDinamica<Carta> &tabuleiro, bool preenchido[])
                 cout << setw(2) << c.simbolo;
             }
         p = p->prox;
-        } else {
+        }else{
             cout << setw(2) << " ";
         }
         cout << "| ";
@@ -121,10 +121,8 @@ void desenha_tabuleiro(const ListaDinamica<Carta> &tabuleiro, bool preenchido[])
             }
             cout << "\n\n";
         }
-    }
-    
+    }  
 }
-
 
 int procura_bonus(Jogador j, string simbolo){
     Nodo<Bonus>* b;
@@ -166,19 +164,53 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, boo
         cin >> o1;
     }while(not preenchido[o1]);
 
+    Carta c2 = virar_carta(tabuleiro,o1);
+    desenha_tabuleiro(tabuleiro,preenchido);
 
     do{
         cout << j.nome << ", digite o numero da segunda carta que quer virar: ";
         cin >> o2;
     }while(not preenchido[o2] || o2 == o1);
 
+    Carta c2 = virar_carta(tabuleiro,o2);
+    desenha_tabuleiro(tabuleiro,preenchido);
+
 }
 
 bool fim_de_jogo(bool vet[]){
     for(int i=0; i<36; i++){
-        if (vet[i] == true;
+        if(vet[i] == true)
             return false;
     }
     return true;
-;
+}
+
+template <typename T> 
+Nodo<T>* acessa_posicao(ListaDinamica<T> lista, int pos){
+    Nodo<T>* p = lista.inicio;
+    for(int i = 0; i < pos; i++){
+        p = p->prox;
+    }
+    return p;
+}
+
+Carta virar_carta(ListaDinamica<Carta> &lista, int pos){
+    Nodo<Carta>* p = acessa_posicao(lista,pos);
+    p->elemento.oculta = false;
+    return p->elemento;
+}
+
+void desvirar_carta(ListaDinamica<Carta> &lista, int pos){
+    Nodo<Carta>* p = acessa_posicao(lista,pos);
+    p->elemento.oculta = true;
+}
+
+bool verifica_se_eh_par(Carta c1, Carta c2){
+    if(c1.tipo == NORMAL && c2.tipo == NORMAL){
+        if(c1.simbolo == c2.simbolo){
+            return true;
+        }
+    }
+    return false;
+}
 
