@@ -164,7 +164,7 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, boo
         cin >> o1;
     }while(not preenchido[o1]);
 
-    Carta c2 = virar_carta(tabuleiro,o1);
+    Carta c1 = virar_carta(tabuleiro,o1);
     desenha_tabuleiro(tabuleiro,preenchido);
 
     do{
@@ -175,13 +175,14 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, boo
     Carta c2 = virar_carta(tabuleiro,o2);
     desenha_tabuleiro(tabuleiro,preenchido);
 
-    if(c1!= NORMAL)
+    if(c1.tipo!= NORMAL){
         aplica_bonus(j, c1);
-        remove_carta(preenchido, c1);
-    if(c2!= NORMAL)
+        remove_carta(preenchido, o1);
+    }
+    if(c2.tipo!= NORMAL){
         aplica_bonus(j, c2);
-        remove_carta(preenchido, c2)
-
+        remove_carta(preenchido, o2)
+    }
     if(verifica_se_eh_par(c1, c2)){
         cout<<"Par encontrado!"<<endl;
         remove_carta(preenchido, o1);
@@ -205,9 +206,6 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, boo
         remove(j.bonus,pb);
         jogada(tabuleiro,jogadores,turno,preenchido);
     }
-
-    
-
 }
 
 bool fim_de_jogo(bool vet[]){
