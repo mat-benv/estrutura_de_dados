@@ -174,3 +174,11 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, boo
 
 }
 
+bool fim_de_jogo(bool vet[]){
+    for(int i=0; i<36; i++){
+        if (vet[i] == true;
+            return false;
+    }
+    return true;
+;
+
