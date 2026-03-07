@@ -175,6 +175,39 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, boo
     Carta c2 = virar_carta(tabuleiro,o2);
     desenha_tabuleiro(tabuleiro,preenchido);
 
+    if(c1!= NORMAL)
+        aplica_bonus(j, c1);
+        remove_carta(preenchido, c1);
+    if(c2!= NORMAL)
+        aplica_bonus(j, c2);
+        remove_carta(preenchido, c2)
+
+    if(verifica_se_eh_par(c1, c2)){
+        cout<<"Par encontrado!"<<endl;
+        remove_carta(preenchido, o1);
+        remove_carta(preenchido, o2);  
+    }else{
+        cout<<"As cartas não formam par!"<<endl;
+        desvirar_carta(tabuleiro, o1);
+        desvirar_carta(tabuleiro, o2);
+    }
+
+    pb = procura_bonus(j, "💀");
+    if(pb>0){
+        cout<<"Carta Penalidade encontrada - 💀"<<endl
+        cout<<j.nome<<" perdeu um ponto"<<endl;
+        remove(j.bonus,pb);
+    }
+
+    pb = procura_bonus(j, "⚡");
+    if(pb>0){
+        cout<<j.nome<<" ganhou uma jogada extra!"<<endl;
+        remove(j.bonus,pb);
+        jogada(tabuleiro,jogadores,turno,preenchido);
+    }
+
+    
+
 }
 
 bool fim_de_jogo(bool vet[]){
@@ -206,6 +239,8 @@ void desvirar_carta(ListaDinamica<Carta> &lista, int pos){
 }
 
 bool verifica_se_eh_par(Carta c1, Carta c2){
+    if(c1.simbolo=="⭐" || c2.simbolo=="⭐")
+        return true;
     if(c1.tipo == NORMAL && c2.tipo == NORMAL){
         if(c1.simbolo == c2.simbolo){
             return true;
@@ -214,3 +249,32 @@ bool verifica_se_eh_par(Carta c1, Carta c2){
     return false;
 }
 
+void aplica_bonus(Jogador &j,Carta c){
+    Bonus b;
+    if(c.simbolo=="⚡"){
+        b.simbolo="⚡";
+        b.duracao=1;
+        b.efeito="jogada extra";
+        insere(j.bonus,b,1);
+    }
+
+    if(c.simbolo=="🚫"){
+        b.simbolo="🚫";
+        b.duracao=1;
+        b.efeito="perde a vez";
+        insere(j.bonus,b,1);
+    }
+
+    if(c.simbolo=="💀"){
+        b.simbolo="💀";
+        b.duracao=1;
+        b.efeito="perde um ponto";
+        insere(j.bonus,b,1);
+        j.pontos--;
+    }
+    //bonus do coringa aplicado na funcao eh par 
+}
+
+void remove_carta(bool vet[],int p){
+    vet[p]=false;
+}
