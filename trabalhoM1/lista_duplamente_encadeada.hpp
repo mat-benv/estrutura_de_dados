@@ -1,3 +1,4 @@
+#include <iostream>
 using namespace std;
 
 template<typename T>
@@ -126,26 +127,38 @@ void remove(ListaDinamica<T> &lista, const int &pos){
     if(not posicao_valida(lista, pos)){
         throw "POSICAO INVALIDA";
     }
+    if(lista.card == 1){
+        Nodo<T> *unico = lista.inicio;
+        delete unico;
+        lista.inicio = NULL;
+        lista.fim = NULL;
+        lista.card = 0;
+        return;
+    }
     Nodo<T> *p;
     Nodo<T> *q;
     if(pos == 1){
         p = lista.inicio;
         lista.inicio = p->prox;
         q = p->prox;
-        q->ant = NULL;
+        if(q != NULL){
+            q->ant = NULL;
+        }
         delete p;
         lista.card--;
-    } else if(pos == tamanho(lista)){
+    } else if(pos == lista.card){
         p = lista.fim;
         lista.fim = p->ant;
         q = p->ant;
-        q->prox = NULL;
+        if(q != NULL){
+            q->prox = NULL;
+        }
         delete p;
         lista.card--;
     } else { 
         p = lista.inicio;
         q = p->prox;
-        for(int i = 2; i < pos; i++){
+        for(int i = 1; i < pos; i++){
             p = p->prox;
             q = p->prox;
         }
@@ -158,10 +171,24 @@ void remove(ListaDinamica<T> &lista, const int &pos){
 }
 
 template<typename T>
-void mostra(const ListaDinamica<T> &lista, const int &pos){
+void mostra(const ListaDinamica<T> &lista){
     Nodo<T> *p = lista.inicio;
+    int i = 1;
     while(p != NULL){
-        cout << p->elemento << endl;
+        cout << p->elemento.simbolo << i << endl;
         p = p->prox;
+        i++;
     }
+}
+
+bool jogar_de_novo(){
+   string s;
+   char c;
+   do{
+      do{
+         cout << "Jogar de novo? S/N \n"; getline(cin, s);
+      }while(s.length() > 1 or s.empty());
+      c = toupper(s[0]);
+   }while(c != 'Y' and c != 'N');
+   if(c == 'N') return false; else return true;
 }

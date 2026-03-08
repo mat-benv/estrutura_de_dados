@@ -1,24 +1,47 @@
 #include <iostream>
-#include "lista_duplamente_encadeada.hpp"
 #include "jogo_da_memoria.hpp"
+
 
 using namespace std;
 
+
 int main(){
+    srand(time(0));
     int turno = 0; //turno atual
-    ListaDinamica<Carta> tabuleiro;
-    Jogador zero, um;
-    Jogador jogadores[2]{zero, um};
-    bool tabuleiro_preenchido[36];
+        ListaDinamica<Carta> tabuleiro;
+        Jogador zero, um;
+        Jogador jogadores[2]{zero, um};
+        bool preenchido[36];
+        bool opt;
 
-    inicializa_tabuleiro(tabuleiro, tabuleiro_preenchido);
+    do{
+        
+        inicializa_tabuleiro(tabuleiro, preenchido);
 
-    string nome;
-    for(int i = 0; i < 2; i++){
-        cout << "Digite o nome do Jogador " << i+1 << '\n';
-        getline(cin, nome);
-        inicializa_jogador(jogadores[i], nome);
-    }
+        string nome;
+        for(int i = 0; i < 2; i++){
+            cout << "Digite o nome do Jogador " << i+1 << '\n';
+            getline(cin, nome);
+            inicializa_jogador(jogadores[i], nome);
+        }
 
+        do{
+            
+            cout << "\nEh a vez de " << jogadores[turno%2].nome << ". Aperte ENTER para jogar.\n";
+
+            cin.get();
+
+            jogada(tabuleiro, jogadores, turno, preenchido);
+            turno++;
+            
+            mostra(tabuleiro);
+        }while(not fim_de_jogo(preenchido));
+
+        cout << "FIM DE JOGO!";
+        fim_de_jogo(jogadores);
+
+        opt = jogar_de_novo();
+
+    }while(opt);
     return 0;
 }
