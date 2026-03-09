@@ -341,7 +341,7 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, boo
             }
         }  
     }else{
-        cout<<"As cartas não formam par!"<<endl;
+        cout<<"As cartas nao formam par!"<<endl;
         desvirar_carta(tabuleiro,preenchido, o1);
         desvirar_carta(tabuleiro,preenchido, o2);
     }

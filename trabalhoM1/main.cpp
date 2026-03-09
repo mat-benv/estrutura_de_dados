@@ -20,9 +20,11 @@ int main(){
 
         string nome;
         for(int i = 0; i < 2; i++){
-            cout << "Digite o nome do Jogador " << i+1 << '\n';
-            getline(cin, nome);
-            inicializa_jogador(jogadores[i], nome);
+            do{
+                cout << "Digite o nome do Jogador " << i+1 << '\n';
+                getline(cin, nome);
+                inicializa_jogador(jogadores[i], nome);
+            }while(nome.empty());
         }
 
         do{
