@@ -46,5 +46,10 @@ int main(){
         opt = jogar_de_novo();
 
     }while(opt);
+    
+    apaga(tabuleiro);
+
+    for(int i=0; i<2; i++)
+        apaga(jogadores[i].bonus);
     return 0;
 }
