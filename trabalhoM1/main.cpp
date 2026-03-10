@@ -34,7 +34,7 @@ int main(){
 
             cin.get();
 
-            jogada(tabuleiro, jogadores[turno%2], turno, preenchido);
+            jogada(tabuleiro, jogadores[turno%2], preenchido);
             turno++;
             
             //mostra_debug(tabuleiro);

@@ -171,13 +171,3 @@ void remove(ListaDinamica<T> &lista, const int &pos){
     }
 }
 
-template<typename T>
-void mostra_debug(const ListaDinamica<T> &lista){
-    Nodo<T> *p = lista.inicio;
-    int i = 1;
-    while(p != NULL){
-        cout << p->elemento.simbolo << i << endl;
-        p = p->prox;
-        i++;
-    }
-}

@@ -14,9 +14,9 @@ enum {
 };
 
 typedef struct{
-    int id;
-    string simbolo;
-    bool oculta;
+    int id; //identificador único
+    string simbolo; //emoji
+    bool oculta; // estado
     int tipo;
 } Carta;
 
@@ -29,11 +29,18 @@ typedef struct{
 typedef struct{
     string nome;
     int pontos;
-    ListaDinamica<Bonus> bonus;
-    string pares;
+    ListaDinamica<Bonus> bonus; // lista dos bonus
+    string pares; //pares feitos
 } Jogador;
 
 void inicializa_tabuleiro(ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
+
+    /*
+    Prepara lista encadeada e lista de referência (estilo bag)
+    Args:
+        ListaDinamica<Carta> &tabuleiro: lista dinâmica que contém as cartas ainda em jogo.
+        bool preenchido[]: vetor com referência para saber a presença da carta. É inicializado totalmente com True.
+    */
 
     cria(tabuleiro);
     
@@ -42,6 +49,11 @@ void inicializa_tabuleiro(ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
         "🍉", "🍇", "🍓", "🫐", "🍈", 
         "🍒", "🍑", "🥭", "🍍", "🥥"
     };
+    /*string simbolos[15]{
+        "AA", "BB", "CC", "DD", "EE",
+        "FF", "GG", "HH", "II", "JJ",
+        "KK", "LL", "MM", "NN", "PP"
+    }*/
     
     for(int i = 0; i < 30; i++){
         Carta c{
@@ -59,6 +71,13 @@ void inicializa_tabuleiro(ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
         "💀", //perde 1 ponto
         "🚫", "🚫" // perde a vez
     };
+
+    /*string simbolos_especiais[6]{
+        "**",
+        "!!", "!!",
+        "%%",
+        "@@", "@@"
+    }*/
 
     int t;
 
@@ -84,6 +103,14 @@ void inicializa_tabuleiro(ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
 
 //template<typename T>
 void inicializa_jogador(Jogador &j, string nome){
+
+    /*
+    Prepara struct do jogador, o mais importe é que inicializa a lista dinâmica dos bonus/penalidades.
+    Args:
+        Jogador &j: struct do jogador
+        string nome: Nome do jogador
+    */
+
     j.nome = nome;
     cria(j.bonus);
     j.pontos = 0;
@@ -91,6 +118,14 @@ void inicializa_jogador(Jogador &j, string nome){
 }
 
 void desenha_tabuleiro(ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
+
+    /*
+    Mostra o tabuleiro em seu estado atual.
+    Args:
+        ListaDinamica<Carta> &tabuleiro: lista dinâmica que contém as cartas do jogo
+        bool preenchido[]: vetor com referência para saber a presença da carta
+    */
+
     cout << "Tabuleiro:\n";
     Nodo<Carta> *p = tabuleiro.inicio;
     Carta c;
@@ -102,7 +137,8 @@ void desenha_tabuleiro(ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
             if(p != NULL){
                 c = p->elemento;
                 if(c.oculta){
-                    cout << setw(2) << c.simbolo;
+                    cout << setw(2) << "🎴";
+                    //cout << setw(2) << "00";
                 } else {
                     cout << setw(2) << c.simbolo;
                 }
@@ -127,6 +163,15 @@ void desenha_tabuleiro(ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
 }
 
 int procura_bonus(Jogador &j, string simbolo){
+
+    /*
+    Verifica se determinado bônus/penalidade está presente na lista do jogador.
+    Args:
+        Jogador &j: struct do jogador
+        string simbolo: simbolo do bônus a ser procurado.
+    Returns:
+        int: Posição lógica do simbolo na lista ou -1 se não estiver presente*/
+
     Nodo<Bonus>* b;
     ListaDinamica<Bonus> lista_b;
     lista_b = j.bonus;
@@ -144,6 +189,14 @@ int procura_bonus(Jogador &j, string simbolo){
 }
 
 bool fim_de_jogo(bool vet[]){
+
+    /*
+    Verifica se o jogo terminou. No caso, se não há mais cartas no tabuleiro.
+    Args:
+        bool vet[]: vetor de referência do tabuleiro.
+    Returns:
+        bool: se o jogo acabou ou não*/
+
     for(int i=0; i<36; i++){
         if(vet[i] == true)
             return false;
@@ -153,6 +206,15 @@ bool fim_de_jogo(bool vet[]){
 
 template <typename T> 
 Nodo<T>* acessa_posicao(ListaDinamica<T> &lista, bool preenchido[], int pos){
+    /*
+    Procura determinada carta na lista dinamica.
+    Args:
+        ListaDinamica<T> &lista: lista dinâmica que contém as cartas.
+        bool preenchido[]: vetor de referência do tabuleiro, para iterar propriamente com posição lógica.
+        int pos: posição lógica.
+    Returns:
+        Nodo<T>*: ponteiro para endereço da carta selecionada.
+    */
     Nodo<T>* p = lista.inicio;
     for(int i = 1; i < pos; i++){
         if(preenchido[i-1]){
@@ -163,17 +225,40 @@ Nodo<T>* acessa_posicao(ListaDinamica<T> &lista, bool preenchido[], int pos){
 }
 
 Carta virar_carta(ListaDinamica<Carta> &lista, bool preenchido[], int pos){
+    /*
+    Vira determinada carta para cima e devolve o struct dela
+    Args:
+        ListaDinamica<Carta> &lista: lista dinamica que contém as cartas ainda em jogo
+        bool preenchido[]: lista de referência para presença da carta no tabuleiro
+        int pos: posição lógica da carta
+    Returns:
+        Carta: struct da carta selecionada.
+    */
     Nodo<Carta>* p = acessa_posicao(lista, preenchido, pos);
     p->elemento.oculta = false;
     return p->elemento;
 }
 
 void desvirar_carta(ListaDinamica<Carta> &lista, bool preenchido[], int pos){
+    /*
+    Muda o valor de oculta para True
+    Args:
+        ListaDinamica<Carta> &lista: lista dinamica que contém as cartas ainda em jogo
+        bool preenchido[]: lista de referência para presença da carta no tabuleiro
+        int pos: posição lógica da carta
+    */
     Nodo<Carta>* p = acessa_posicao(lista, preenchido, pos);
     p->elemento.oculta = true;
 }
 
 bool verifica_se_eh_par(Carta c1, Carta c2){
+    /*
+    Verifica se dadas 2 cartas formam par, mesmo se com coringa.
+    Args:
+        Carta c1: primeira carta
+        Carta c2: segunda carta
+    Returns:
+        bool: se é par ou não*/
     if((c1.simbolo=="⭐" && c2.tipo == NORMAL)|| (c2.simbolo=="⭐" && c1.tipo == NORMAL))
         return true;
     if(c1.tipo == NORMAL && c2.tipo == NORMAL){
@@ -185,6 +270,12 @@ bool verifica_se_eh_par(Carta c1, Carta c2){
 }
 
 void aplica_bonus(Jogador &j, Carta c){
+    /*
+    Adiciona bonus da carta na lista de bonus do jogador
+    Args:
+        Jogador &j: jogador
+        Carta c: carta
+    */
     Bonus b;
     if(c.simbolo =="⚡"){
         b.simbolo="⚡";
@@ -211,6 +302,14 @@ void aplica_bonus(Jogador &j, Carta c){
 }
 
 int acha_carta(bool preenchido[], int pos_tab){
+    /*
+    Encontra posição lógica na lista encadeada
+    Args:
+        bool preenchido[]: vetor de referência para presença de cartas no tabuleiro
+        int pos_tab: posição lógica do espaço que a carta está ocupando no tabuleiro
+    Returns:
+        int: posição lógica da carta na lista encadeada
+    */
     int pos_lista = 0;
     for(int i = 0; i < pos_tab; i++){
         if(preenchido[i]){
@@ -221,6 +320,13 @@ int acha_carta(bool preenchido[], int pos_tab){
 }
 
 void remove_carta(ListaDinamica<Carta> &tabuleiro, bool vet[], int p){
+    /*
+    Remove uma carta do jogo
+    Args:
+        ListaDinamica<Carta> &tabuleiro: lista dinamica que contém as cartas ainda em jogo
+        bool vet[]: lista de referência para presença da carta no tabuleiro
+        int p: posição lógica do espaço da carta no tabuleiro
+    */
     int n = acha_carta(vet, p);
     remove(tabuleiro, n);
     if(p >= 1 && p <= 36){
@@ -229,11 +335,22 @@ void remove_carta(ListaDinamica<Carta> &tabuleiro, bool vet[], int p){
 }
 
 void aplica_ponto(Jogador &j, Carta c){
+    /*
+    Adiciona ponto para jogador e adiciona o simbolo da carta na lista de pares
+    Args:
+        Jogador &j: jogador
+        Carta c: carta
+    */
     j.pares = j.pares + c.simbolo;
     j.pontos++;
 }
 
 void remove_ponto(Jogador &j){
+    /*
+    Remove um ponto do jogador
+    Args:
+        Jogador &j: jogador
+    */
     if(j.pontos > 0){
         j.pontos--;
         cout << j.nome << " perdeu um ponto. \n";
@@ -243,6 +360,13 @@ void remove_ponto(Jogador &j){
 }
 
 void remove_par(ListaDinamica<Carta> &tabuleiro, bool preenchido[], string simbolo){
+    /*
+    Procura par de determinada carta e o remove de jogo
+    Args:
+        ListaDinamica<Carta> &tabuleiro: lista dinamica que contém as cartas ainda em jogo
+        bool preenchido[]: lista de referência para presença da carta no tabuleiro
+        string simbolo: simbolo do par a ser encontrado
+    */
 
 
     Nodo<Carta>* p;
@@ -264,6 +388,14 @@ void remove_par(ListaDinamica<Carta> &tabuleiro, bool preenchido[], string simbo
 }
 
 void bonus_estrela(ListaDinamica<Carta> &tabuleiro, bool preenchido[], Carta c1, Carta c2){
+    /*
+    Lida com o bonus coringa, removendo de jogo o par da carta que não é o coringa
+    Args:
+        ListaDinamica<Carta> &tabuleiro: lista dinamica que contém as cartas ainda em jogo
+        bool preenchido[]: lista de referência para presença da carta no tabuleiro
+        Carta c1: primeira carta
+        Carta c2: segunda carta
+    */
     int id;
     if(c1.simbolo == "⭐"){
         if(c2.simbolo != "⭐"){
@@ -281,9 +413,20 @@ void bonus_estrela(ListaDinamica<Carta> &tabuleiro, bool preenchido[], Carta c1,
     
 }
 
-void jogada(ListaDinamica<Carta> &tabuleiro, Jogador &j, int turno, bool preenchido[]){
+void jogada(ListaDinamica<Carta> &tabuleiro, Jogador &j, bool preenchido[]){
+
+    /*
+    Processa jogada
+    Args:
+        ListaDinamica<Carta> &tabuleiro: lista dinamica que contém as cartas ainda em jogo
+        Jogador &j: jogador da vez
+        bool preenchido[]: lista de referência para presença da carta no tabuleiro
+    */
 
     int o1, o2;
+
+    system("clear");
+    //system("cls");
 
     int pb = procura_bonus(j, "🚫");
 
@@ -300,7 +443,8 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador &j, int turno, bool preench
         cin >> o1;
     }while(not preenchido[o1-1] || (o1 < 1 || o1 > 36));
 
-    //system("clear");
+    system("clear");
+    //system("cls");
 
     Carta c1 = virar_carta(tabuleiro, preenchido, o1);
 
@@ -311,7 +455,8 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador &j, int turno, bool preench
         cin >> o2;
     }while(not preenchido[o2-1] || (o2 == o1) || (o1 < 1 || o1 > 36));
 
-    //system("clear");
+    system("clear");
+    //system("cls");
 
     Carta c2 = virar_carta(tabuleiro,preenchido,o2);
     desenha_tabuleiro(tabuleiro,preenchido);
@@ -363,13 +508,17 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador &j, int turno, bool preench
     if(pb>0){
         cout<<j.nome<<" ganhou uma jogada extra!"<<endl;
         remove(j.bonus,pb);
-        jogada(tabuleiro,j,turno,preenchido);
+        jogada(tabuleiro,j,preenchido);
     }
     cin.ignore();
 }
 
 void fim_de_jogo(Jogador jogadores[]){
-
+    /*
+    Mostra placar e calcula vencedor
+    Args:
+        Jogador jogadores[]: vetor com os dois jogadores
+    */
 
     cout << "Placar:\n";
     for(int i = 0; i < 2; i++){
@@ -390,6 +539,11 @@ void fim_de_jogo(Jogador jogadores[]){
 }
 
 bool jogar_de_novo(){
+    /*
+    Pergunta se o usuario quer jogar de novo
+    Returns:
+        bool: se quer ou não jogar
+    */
    string s;
    char c;
    do{
@@ -398,5 +552,18 @@ bool jogar_de_novo(){
       }while(s.length() > 1 or s.empty());
       c = toupper(s[0]);
    }while(c != 'S' and c != 'N');
-   if(c == 'N') return false; else return true;
+   if(c == 'N') return false; 
+   else return true;
 }
+
+/*template<typename T>
+void mostra_debug(const ListaDinamica<T> &lista){
+    Nodo<T> *p = lista.inicio;
+    int i = 1;
+    while(p != NULL){
+        cout << p->elemento.simbolo << i << endl;
+        p = p->prox;
+        i++;
+    }
+}
+*/
