@@ -129,10 +129,10 @@ void remove(ListaDinamica<T> &lista, const int &pos){
     }
     if(lista.card == 1){
         Nodo<T> *unico = lista.inicio;
-        delete unico;
         lista.inicio = NULL;
         lista.fim = NULL;
         lista.card = 0;
+        delete unico;
         return;
     }
     Nodo<T> *p;
@@ -157,21 +157,22 @@ void remove(ListaDinamica<T> &lista, const int &pos){
         lista.card--;
     } else { 
         p = lista.inicio;
-        q = p->prox;
-        for(int i = 1; i < pos; i++){
+        for(int i = 1; i < pos-1; i++){
             p = p->prox;
-            q = p->prox;
         }
+        q = p->prox; // node to remove
         p->prox = q->prox;
-        p = q->prox;
-        p->ant = q->ant;
+        if(q != NULL){
+            p = q->prox;
+            p->ant = q->ant;
+        }
         delete q;
         lista.card--;
     }
 }
 
 template<typename T>
-void mostra(const ListaDinamica<T> &lista){
+void mostra_debug(const ListaDinamica<T> &lista){
     Nodo<T> *p = lista.inicio;
     int i = 1;
     while(p != NULL){
@@ -179,16 +180,4 @@ void mostra(const ListaDinamica<T> &lista){
         p = p->prox;
         i++;
     }
-}
-
-bool jogar_de_novo(){
-   string s;
-   char c;
-   do{
-      do{
-         cout << "Jogar de novo? S/N \n"; getline(cin, s);
-      }while(s.length() > 1 or s.empty());
-      c = toupper(s[0]);
-   }while(c != 'Y' and c != 'N');
-   if(c == 'N') return false; else return true;
 }

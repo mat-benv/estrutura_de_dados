@@ -6,6 +6,7 @@ using namespace std;
 
 
 int main(){
+    setlocale( LC_ALL, "pt-BR" );
     srand(time(0));
     int turno = 0; //turno atual
         ListaDinamica<Carta> tabuleiro;
@@ -33,10 +34,10 @@ int main(){
 
             cin.get();
 
-            jogada(tabuleiro, jogadores, turno, preenchido);
+            jogada(tabuleiro, jogadores[turno%2], turno, preenchido);
             turno++;
             
-            mostra(tabuleiro);
+            //mostra_debug(tabuleiro);
         }while(not fim_de_jogo(preenchido));
 
         cout << "FIM DE JOGO!";

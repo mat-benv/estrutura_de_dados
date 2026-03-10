@@ -90,11 +90,6 @@ void inicializa_jogador(Jogador &j, string nome){
     j.pares = "";
 }
 
-Jogador jogador_da_vez(Jogador jogadores[], int jogada){
-    int i = jogada % 2;
-    return jogadores[i];
-}
-
 void desenha_tabuleiro(ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
     cout << "Tabuleiro:\n";
     Nodo<Carta> *p = tabuleiro.inicio;
@@ -104,13 +99,17 @@ void desenha_tabuleiro(ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
         cout << "|";
 
         if(preenchido[i]){
-            c = p->elemento;
-            if(c.oculta){
-                cout << setw(2) << "🎴";
+            if(p != NULL){
+                c = p->elemento;
+                if(c.oculta){
+                    cout << setw(2) << c.simbolo;
+                } else {
+                    cout << setw(2) << c.simbolo;
+                }
+                p = p->prox;
             } else {
-                cout << setw(2) << c.simbolo;
+                cout << setw(2) << " ";
             }
-        p = p->prox;
         }else{
             cout << setw(2) << " ";
         }
@@ -127,7 +126,7 @@ void desenha_tabuleiro(ListaDinamica<Carta> &tabuleiro, bool preenchido[]){
     cout << '\n';  
 }
 
-int procura_bonus(Jogador j, string simbolo){
+int procura_bonus(Jogador &j, string simbolo){
     Nodo<Bonus>* b;
     ListaDinamica<Bonus> lista_b;
     lista_b = j.bonus;
@@ -175,7 +174,7 @@ void desvirar_carta(ListaDinamica<Carta> &lista, bool preenchido[], int pos){
 }
 
 bool verifica_se_eh_par(Carta c1, Carta c2){
-    if(c1.simbolo=="⭐" || c2.simbolo=="⭐")
+    if((c1.simbolo=="⭐" && c2.tipo == NORMAL)|| (c2.simbolo=="⭐" && c1.tipo == NORMAL))
         return true;
     if(c1.tipo == NORMAL && c2.tipo == NORMAL){
         if(c1.simbolo == c2.simbolo){
@@ -221,7 +220,7 @@ int acha_carta(bool preenchido[], int pos_tab){
     return pos_lista;
 }
 
-void remove_carta(ListaDinamica<Carta> &tabuleiro, bool vet[],int p){
+void remove_carta(ListaDinamica<Carta> &tabuleiro, bool vet[], int p){
     int n = acha_carta(vet, p);
     remove(tabuleiro, n);
     if(p >= 1 && p <= 36){
@@ -229,12 +228,12 @@ void remove_carta(ListaDinamica<Carta> &tabuleiro, bool vet[],int p){
     }
 }
 
-void aplica_ponto(Jogador j, Carta c){
-    j.pares += c.simbolo;
+void aplica_ponto(Jogador &j, Carta c){
+    j.pares = j.pares + c.simbolo;
     j.pontos++;
 }
 
-void remove_ponto(Jogador j){
+void remove_ponto(Jogador &j){
     if(j.pontos > 0){
         j.pontos--;
         cout << j.nome << " perdeu um ponto. \n";
@@ -243,54 +242,54 @@ void remove_ponto(Jogador j){
     }
 }
 
+void remove_par(ListaDinamica<Carta> &tabuleiro, bool preenchido[], string simbolo){
+
+
+    Nodo<Carta>* p;
+    int i = 0;
+
+    p = tabuleiro.inicio;
+
+    while(i < 36){
+        if(preenchido[i]){
+            if(simbolo == p->elemento.simbolo){
+                remove_carta(tabuleiro, preenchido, i+1);
+                return;
+            }
+            p = p->prox;
+        }
+        i++;
+    }
+
+}
+
 void bonus_estrela(ListaDinamica<Carta> &tabuleiro, bool preenchido[], Carta c1, Carta c2){
     int id;
     if(c1.simbolo == "⭐"){
         if(c2.simbolo != "⭐"){
-            id = c2.id;
+            remove_par(tabuleiro, preenchido, c2.simbolo);
         } else {
             return;
         }
     } else if(c2.simbolo == "⭐"){
         if(c1.simbolo != "⭐"){
-            id = c1.id;
+            remove_par(tabuleiro, preenchido, c1.simbolo);
         } else {
             return;
         }
     }
-
-    if(id < 15){
-        id = id + 15;
-    } else {
-        id = id - 15;
-    }
-
-    Nodo<Carta>* p;
-    int i = 1;
-    p = tabuleiro.inicio;
-    while(p != NULL){
-        if(id == p->elemento.id){
-            remove_carta(tabuleiro, preenchido, i);
-            return;
-        }
-        i++;
-    }
     
 }
 
-void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, bool preenchido[]){
-    Jogador j;
-    
-    int o1, o2;
+void jogada(ListaDinamica<Carta> &tabuleiro, Jogador &j, int turno, bool preenchido[]){
 
-    j = jogador_da_vez(jogadores, turno);
+    int o1, o2;
 
     int pb = procura_bonus(j, "🚫");
 
     if(pb > 0){
         cout << j.nome << " perdeu a vez.\n";
         remove(j.bonus, pb);
-        cin.get();
         return;
     }
     
@@ -301,7 +300,7 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, boo
         cin >> o1;
     }while(not preenchido[o1-1] || (o1 < 1 || o1 > 36));
 
-    system("clear");
+    //system("clear");
 
     Carta c1 = virar_carta(tabuleiro, preenchido, o1);
 
@@ -312,34 +311,41 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, boo
         cin >> o2;
     }while(not preenchido[o2-1] || (o2 == o1) || (o1 < 1 || o1 > 36));
 
-    system("clear");
+    //system("clear");
 
     Carta c2 = virar_carta(tabuleiro,preenchido,o2);
     desenha_tabuleiro(tabuleiro,preenchido);
 
     if(c1.tipo!= NORMAL){
-        aplica_bonus(j, c1);
-        remove_carta(tabuleiro, preenchido, o1);
-        desvirar_carta(tabuleiro,preenchido, o2);
+        if(c2.simbolo != "⭐"){
+            aplica_bonus(j, c1);
+            desvirar_carta(tabuleiro, preenchido, o2);
+            remove_carta(tabuleiro, preenchido, o1);
+        }
     }
     if(c2.tipo!= NORMAL){
-        aplica_bonus(j, c2);
-        remove_carta(tabuleiro, preenchido, o2);
-        desvirar_carta(tabuleiro,preenchido, o1);
+        if(c2.simbolo != "⭐"){
+            aplica_bonus(j, c2);
+            desvirar_carta(tabuleiro,preenchido, o1);
+            remove_carta(tabuleiro, preenchido, o2);
+        }
     }
     if(verifica_se_eh_par(c1, c2)){
         cout<<"Par encontrado!"<<endl;
         aplica_ponto(j, c1);
-        remove_carta(tabuleiro, preenchido, o1);
-        remove_carta(tabuleiro, preenchido, o2-1);
+        
+        if(o1 < o2){
+            remove_carta(tabuleiro, preenchido, o2);
+            remove_carta(tabuleiro, preenchido, o1);
+        } else {
+            remove_carta(tabuleiro, preenchido, o1);
+            remove_carta(tabuleiro, preenchido, o2);
+        }
+        
         if(c1.simbolo == "⭐" || c2.simbolo == "⭐"){
             bonus_estrela(tabuleiro, preenchido, c1, c2);
-            pb = procura_bonus(j, "⭐");
-            if(pb>0){
-                cout<<j.nome<<" fez par com coringa!"<<endl;
-                remove(j.bonus,pb);
-            }
-        }  
+            cout<<j.nome<<" fez par com coringa!"<<endl;
+        } 
     }else{
         cout<<"As cartas nao formam par!"<<endl;
         desvirar_carta(tabuleiro,preenchido, o1);
@@ -357,7 +363,7 @@ void jogada(ListaDinamica<Carta> &tabuleiro, Jogador jogadores[], int turno, boo
     if(pb>0){
         cout<<j.nome<<" ganhou uma jogada extra!"<<endl;
         remove(j.bonus,pb);
-        jogada(tabuleiro,jogadores,turno,preenchido);
+        jogada(tabuleiro,j,turno,preenchido);
     }
     cin.ignore();
 }
@@ -381,4 +387,16 @@ void fim_de_jogo(Jogador jogadores[]){
     } else {
         cout << jogadores[0].nome << " e " << jogadores[1].nome << " empataram!";
     }
+}
+
+bool jogar_de_novo(){
+   string s;
+   char c;
+   do{
+      do{
+         cout << "Jogar de novo? S/N \n"; getline(cin, s);
+      }while(s.length() > 1 or s.empty());
+      c = toupper(s[0]);
+   }while(c != 'S' and c != 'N');
+   if(c == 'N') return false; else return true;
 }
