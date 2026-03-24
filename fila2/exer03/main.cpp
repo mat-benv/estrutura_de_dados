@@ -1,0 +1,31 @@
+/*Escreva um programa que simule um sistema computacional com as seguintes características.
+Um número aleatório N é gerado no intervalo de 0 a 100, inclusive.
+Caso 1. ( 0  N  49 ) Um processo é iniciado no sistema.
+( 0  N  25 ) Um processo da classe A é inserido na fila A.
+( 26  N  39 ) Um processo da classe B é inserido na fila B.
+( 40  N  49 ) Um processo da classe C é inserido na fila C.
+Caso 2. ( 50  N  100 ) Um processo termina a sua execução e um outro processo pode ser executado.
+( 50  N  75 ) A partição A se torna disponível.
+( 76  N  89 ) A partição B se torna disponível.
+( 90  N  100 ) A partição C se torna disponível.
+Se uma partição se tornar vazia e não houver processo que possa ser executado naquela partição, um novo
+número aleatório é gerado e a simulação continua.
+Faça a simulação para 100 iterações e a cada 5 iterações exiba o estado corrente de cada fila, o estado
+corrente de cada partição e a quantidade de processos executados para cada classe de processos.
+Considere a estrutura de fila estática para representar as filas envolvidas na simulação.*/
+
+#include <iostream>
+#include "../fila.hpp"
+#include <cstdlib>
+
+int main(){
+
+    srand(time(0));
+
+    for(int i = 0; i < 100; i++){
+        
+    }
+
+
+    return 0;
+}

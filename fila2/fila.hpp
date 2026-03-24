@@ -146,3 +146,18 @@ void show(Fila<T,M> &fila){
     }
     std::cout << std::endl;
 }
+
+template <typename T, int M>
+bool same_elements(Fila<T,M> &fila1, Fila<T,M> &fila2){
+    int j = fila1.start;
+    for(int i = 0; i < fila1.card; i++){
+        if(j == M){
+            j = 0;
+        }
+        if(! exists(fila2, fila1.elements[j])){
+            return false;
+        };
+        j++;
+    }
+    return true;
+}
