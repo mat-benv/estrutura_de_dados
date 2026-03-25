@@ -18,13 +18,85 @@ Considere a estrutura de fila estática para representar as filas envolvidas na 
 #include "../fila.hpp"
 #include <cstdlib>
 
+enum{
+    FREE,
+    BUSY
+};
+
+typedef struct{
+    Fila<int,100> fila;
+    bool status;
+    int count;
+} ProcessClass;
+
+void create_process_class(ProcessClass &x){
+    create(x.fila);
+    x.status = FREE;
+    x.count = 0;
+}
+
+void insert_process(ProcessClass &x){
+    insert(x.fila,1);
+    if(x.status == FREE){
+        x.status = BUSY;
+    }
+}
+
+void end_process(ProcessClass &x){
+    if(x.status == BUSY){
+        remove(x.fila);
+        x.count++;
+        if(empty(x.fila)){
+            x.status = FREE;
+        }
+    }
+}
+
+void show_status(ProcessClass &x){
+    std::cout << "Queue: " << size(x.fila)
+    << "\nStatus: " << ((x.status == FREE) ? "Free" : "Busy")
+    << "\nDone: " << x.count << std::endl;
+}
+
 int main(){
 
     srand(time(0));
+    ProcessClass A, B, C;
+
+    create_process_class(A);
+    create_process_class(B);
+    create_process_class(C);
 
     for(int i = 0; i < 100; i++){
-        
+        int j = rand() % 101;
+        if(j < 50){
+            if(j < 26){
+                insert_process(A);
+            } else if (j < 40){
+                insert_process(B);
+            } else if (j < 50){
+                insert_process(C);
+            }
+        } else {
+            if(j < 76){
+                end_process(A);
+            } else if (j < 90){
+                end_process(B);
+            } else {
+                end_process(C);
+            }
+        }
+        if((i+1)%5 == 0){
+            std::cout << "Process class A:\n";
+            show_status(A);
+            std::cout << "Process class B:\n";
+            show_status(B);
+            std::cout << "Process class C:\n";
+            show_status(C);
+            std::cout << std::endl;
+        }
     }
+    
 
 
     return 0;

@@ -34,13 +34,13 @@ int main(){
 
         if(m % 5 == 0){
             for(int t = rand() % 4; t > 0; t--){
-                insert(taxis, m);
+                queue_insert(taxis, m);
             }
         }
 
         if(m % 3 == 0){
             for(int p = rand() % 3; p > 0; p--){
-                insert(passageiros, m);
+                queue_insert(passageiros, m);
             }
         }
 

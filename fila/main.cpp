@@ -29,8 +29,7 @@ int main(){
                 total_people++;
             }
         }
-
-        remove(fila);
+        if(! empty(fila)) remove(fila);
         show(fila);
     }
 
