@@ -142,7 +142,7 @@ void remove(ListaDinamica<T> &array, const int &pos){
         q->next = NULL;
         delete p;
         array.card--;
-    } else { //TODO FROM HERE
+    } else {
         p = array.start;
         q = p->next;
         for(int i = 2; i < pos; i++){

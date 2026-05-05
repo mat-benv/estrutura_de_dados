@@ -20,7 +20,7 @@ Admita a estrutura de fila estática para representar as filas envolvidas na sim
 
 void starting_length(Fila<int,100> &cx, int cust){
     for(int i = 0; i < cust; i++){
-        insert(cx, 1);
+        queue_insert(cx, 1);
     }
 }
 
@@ -54,7 +54,7 @@ int main(){
 
         int k = shortest_line(caixas, cust);
 
-        insert(caixas[k], cust);
+        queue_insert(caixas[k], cust);
 
         if(i%2 == 0){
             if(! empty(caixas[3])) remove(caixas[3]);

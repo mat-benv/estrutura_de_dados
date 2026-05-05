@@ -97,7 +97,7 @@ T last_in_line(Fila<T,M> &fila){
 }
 
 template <typename T, int M>
-void insert(Fila<T,M> &fila, T element){
+void queue_insert(Fila<T,M> &fila, T element){
     if(! have_space(fila)){
         throw "OVERFLOW";
     }
@@ -140,13 +140,8 @@ void show(Fila<T,M> &fila){
 
 template <typename T, int M>
 bool same_elements(Fila<T,M> &fila1, Fila<T,M> &fila2){
-    int j = fila1.start;
-    for(int i = 0; i < fila1.card; i++){
-        j++;
-        if(j > M-1){
-            j = 0;
-        }
-        if(! exists(fila2, fila1.elements[j])){
+    for(int i = 1; i <= fila1.card; i++){
+        if(! exists(fila2, get_element[fila1, i])){
             return false;
         };
     }

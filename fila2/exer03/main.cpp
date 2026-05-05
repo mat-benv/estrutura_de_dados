@@ -36,25 +36,22 @@ void create_process_class(ProcessClass &x){
 }
 
 void insert_process(ProcessClass &x){
-    insert(x.fila,1);
-    if(x.status == FREE){
+    queue_insert(x.fila,1);
+}
+
+void end_process(ProcessClass &x){
+    x.status = FREE;
+    if(!empty(x.fila)){
+        remove(x.fila);
+        x.count++;
         x.status = BUSY;
     }
 }
 
-void end_process(ProcessClass &x){
-    if(x.status == BUSY){
-        remove(x.fila);
-        x.count++;
-        if(empty(x.fila)){
-            x.status = FREE;
-        }
-    }
-}
 
 void show_status(ProcessClass &x){
     std::cout << "Queue: " << size(x.fila)
-    << "\nStatus: " << ((x.status == FREE) ? "Free" : "Busy")
+    << "\nStatus: " << (x.status ? "Busy" : "Free")
     << "\nDone: " << x.count << std::endl;
 }
 

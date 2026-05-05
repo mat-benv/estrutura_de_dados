@@ -24,13 +24,7 @@ int main(){
     srand(time(0));
 
     for(int m = 0; m < 600; m++){
-        if(!empty(passageiros) && !empty(taxis)){
-            remove(passageiros);
-            remove(taxis);
-            taxis_usados++;
-            media_espera += tempo_espera;
-            tempo_espera = 0;
-        }
+        
 
         if(m % 5 == 0){
             for(int t = rand() % 4; t > 0; t--){
@@ -44,7 +38,13 @@ int main(){
             }
         }
 
-        tempo_espera++;
+        if(!empty(passageiros) && !empty(taxis)){
+            tempo_espera = m - next_in_line(passageiros);
+            remove(passageiros);
+            remove(taxis);
+            taxis_usados++;
+            media_espera += tempo_espera;
+        }
     }
 
     media_espera = media_espera/(double)taxis_usados;
